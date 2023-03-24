@@ -1,10 +1,10 @@
-body {
+  body {
     font-family: 'Times New Roman', Times, serif;
   }
   .contact-form {
     background: #fff;
     margin-bottom: 5%;
-    width: 70%;
+    width: 60%;
     padding: 0 ;
     margin-top: 100px;
   
@@ -67,7 +67,6 @@ body {
     padding: 10px;
     cursor: auto;
     
-    
   }
   
   .form-group .btnContact:hover{
@@ -78,9 +77,19 @@ body {
 
 
 
-/*Background Animation */w 
+/*Background Animation */
 
 
+#container-inside {
+    position: relative;
+    min-width: 960px;
+    max-width: 1280px;
+    height: auto;
+    min-height: 100%;
+    margin: 0px auto;
+    padding: 0px auto;
+    overflow: visible;
+}
 
   #container{
     background: #00adef;
@@ -95,16 +104,6 @@ body {
     padding: 0px auto;
 }
 
-#container-inside {
-    position: relative;
-    min-width: 960px;
-    max-width: 1280px;
-    height: auto;
-    min-height: 100%;
-    margin: 0px auto;
-    padding: 0px auto;
-    overflow: visible;
-}
 
 
 
@@ -126,4 +125,4 @@ body {
 }
 
 
-
+/*espace moi le txtService et le txtPhone */
