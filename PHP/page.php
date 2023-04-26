@@ -18,13 +18,15 @@
     <div class="contact-image">
       <img src="https://image.ibb.co/kUagtU/rocket_contact.png" alt="rocket_contact" />
     </div>
-    <input type="hidden" name="btnSubmit" value="1">
-      <form method="post" action="">
+    <form method="post" action="">
+        <input type="hidden" name="btnSubmit" value="1">
         <h3>Formulaire de Ticket (Eau de Paris)</h3>
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
               <input type="text" name="txtEmail" class="form-control" placeholder="Votre Email" value="" />
+              <div id="error-message2"></div>
+
             </div>
             <div class="form-group">
               <input type="text" name="txtName" class="form-control" placeholder="Votre nom" value="" />
@@ -32,19 +34,23 @@
             
             <div class="form-group mb-3">
               <select name="txtService" class="form-control" placeholder="Votre service" value="">
-                <option value="service">Service Informatique</option>
-                <option value="service1">Service Juridique</option>
-                <option value="service2">Service Resource Humaine</option>
-                <option value="service3">Service Communication</option>
-                <option value="service4">Service Clientéle</option>
+                <option value="Informatique">Service Informatique</option>
+                <option value="Juridique">Service Juridique</option>
+                <option value="RH">Service Resource Humaine</option>
+                <option value="Communication">Service Communication</option>
+                <option value="Clientéle">Service Clientéle</option>
               </select>
             </div>
             
             <div class="form-group">
               <input type="text" name="txtPhone" class="form-control" placeholder="Votre numéro de téléphone" value="" />
+              <div id="error-message3"></div>
+
             </div>
             <div class="form-group">
               <input type="submit" name="btnSubmit" class="btnContact" value="Envoyer" />
+              <div id="error-message"></div>
+
             </div>
           </div>
           <div class="col-md-6">
@@ -56,21 +62,56 @@
       </form>
 </div>
 <?php
-if(isset($_POST['btnSubmit'])) {
-    $to = "thiefaine.sofiane@gmail.com";
-    $subject = "Nouveau ticket soumis";
-    $txtName = $_POST['txtName'];
-    $txtEmail = $_POST['txtEmail'];
-    $txtService = $_POST['txtService'];
-    $txtPhone = $_POST['txtPhone'];
-    $txtMsg = $_POST['txtMsg'];
-    $message = "Nom: ".$txtName."\nEmail: ".$txtEmail."\nService: ".$txtService."\nTéléphone: ".$txtPhone."\nMessage: ".$txtMsg;
-    $headers = "From: ".$txtEmail;
+// Connexion à la base de données
+$servername = "localhost";
+$username = "root";
+$password = "root";
+$dbname = "eaudeparis";
 
-    mail($to,$subject,$message,$headers);
+$conn = mysqli_connect($servername, $username, $password, $dbname);
 
-    echo "Votre ticket a été soumis avec succès. Nous vous contacterons bientôt.";
+// Vérifier la connexion
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
+
+// Vérifier si le formulaire a été soumis
+if(isset($_POST['btnSubmit'])) {
+  $txtName = $_POST['txtName'];
+  $txtEmail = $_POST['txtEmail'];
+  $txtService = $_POST['txtService'];
+  $txtPhone = $_POST['txtPhone'];
+  $txtMsg = $_POST['txtMsg'];
+
+  // Vérifier si l'email est valide
+  if (!filter_var($txtEmail, FILTER_VALIDATE_EMAIL)) {
+      echo "<script>document.getElementById('error-message2').innerHTML = 'Veuillez entrer une adresse e-mail valide !';</script>";
+  } 
+  // Vérifier si le numéro de téléphone est valide
+  elseif (!preg_match("/^[0-9]{10}$/", $txtPhone)) {
+      echo "<script>document.getElementById('error-message3').innerHTML = 'Veuillez entrer un numéro de téléphone valide !';</script>";
+  }
+  else {
+      // Vérifier si tous les champs sont remplis
+      if(empty($txtName) || empty($txtService) ||  empty($txtMsg)) {
+        echo "<script>document.getElementById('error-message').innerHTML = 'Veuillez remplir tous les champs !';</script>";
+      } else {
+        // Insérer les données dans la base de données
+        $sql = "INSERT INTO ticket (name, email, domaine, tel, message) VALUES ('$txtName', '$txtEmail','$txtService', '$txtPhone', '$txtMsg')";
+
+        if (mysqli_query($conn, $sql)) {
+            echo "Votre ticket a été soumis avec succès. Nous vous contacterons bientôt.";
+        } else {
+            echo "Erreur: " . $sql . "<br>" . mysqli_error($conn);
+        }
+      }
+  }
+}
+
+// Fermer la connexion à la base de données
+mysqli_close($conn);
+
+
 ?>
 
 </body>
